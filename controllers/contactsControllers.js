@@ -12,22 +12,30 @@ export const getAllContacts = async (req, res) => {
   res.json(contacts);
 };
 
-export const getOneContact = async (req, res) => {
-  const { id } = req.params;
-  const contact = await getContactById(id);
-  if (!contact) {
-    return res.status(404).json({ message: "Not found" });
+export const getOneContact = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const contact = await getContactById(id);
+    if (!contact) {
+      throw HttpError(404);
+    }
+    res.json(contact);
+  } catch (error) {
+    next(error);
   }
-  res.json(contact);
 };
 
-export const deleteContact = async (req, res) => {
-  const { id } = req.params;
-  const contact = await removeContact(id);
-  if (!contact) {
-    return res.status(404).json({ message: "Not found" });
+export const deleteContact = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const contact = await removeContact(id);
+    if (!contact) {
+      throw HttpError(404);
+    }
+    res.json(contact);
+  } catch (error) {
+    next(error);
   }
-  res.json(contact);
 };
 
 export const createContact = async (req, res) => {
@@ -37,13 +45,17 @@ export const createContact = async (req, res) => {
   res.status(201).json(newContact);
 };
 
-export const updateContact = async (req, res) => {
-  const { id } = req.params;
+export const updateContact = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updatedContact = await modifyContact(id, req.body);
 
-  const updatedContact = await modifyContact(id, req.body);
+    if (!updatedContact) {
+      throw HttpError(404);
+    }
 
-  if (!updatedContact) {
-    return res.status(404).json({ message: "Not found" });
+    res.json(updatedContact);
+  } catch (error) {
+    next(error);
   }
-  res.json(updatedContact);
 };
