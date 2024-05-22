@@ -2,9 +2,14 @@ import User from "../models/user.js";
 import fs from "node:fs/promises";
 import path from "node:path";
 import Jimp from "jimp";
+import HttpError from "../helpers/HttpError.js";
 
 const changeAvatar = async (req, res, next) => {
   try {
+    if (!req.file) {
+      throw HttpError(400, "No file uploaded");
+    }
+
     const tempPath = req.file.path;
     const targetPath = path.resolve("public/avatars", req.file.filename);
 
