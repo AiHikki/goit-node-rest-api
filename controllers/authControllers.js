@@ -2,6 +2,7 @@ import User from "../models/user.js";
 import HttpError from "../helpers/HttpError.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import gravatar from "gravatar";
 
 const register = async (req, res, next) => {
   try {
@@ -13,13 +14,15 @@ const register = async (req, res, next) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const avatarURL = gravatar.url(email);
 
-    await User.create({ email, password: hashedPassword });
+    await User.create({ email, password: hashedPassword, avatarURL });
 
     res.send({
       user: {
         email,
         subscription: subscription || "starter",
+        avatarURL,
       },
     });
   } catch (error) {
@@ -54,6 +57,7 @@ const login = async (req, res, next) => {
       user: {
         email,
         subscription: user.subscription,
+        avatarURL: user.avatarURL,
       },
     });
   } catch (error) {
