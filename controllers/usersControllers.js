@@ -4,7 +4,7 @@ import path from "node:path";
 import Jimp from "jimp";
 import crypto from "node:crypto";
 import HttpError from "../helpers/HttpError.js";
-import { sendMail } from "../mail.js";
+import { sendVerificationMail } from "../mail.js";
 
 const changeAvatar = async (req, res, next) => {
   try {
@@ -68,18 +68,9 @@ const requestVerificationToken = async (req, res, next) => {
       throw HttpError(400, "Verification has already been passed");
     }
 
-    sendMail({
+    sendVerificationMail({
       to: email,
-      from: "rmik9067@gmail.com",
-      subject: "Please verify your email address",
-      html: `
-        <h1>Please verify your email address</h1>
-        <p>Click this link to verify your email address</p>
-        <a href="http://localhost:3000/users/verify/${user.verificationToken}">
-          Verify</a>`,
-      text: `
-        Please verify your email address
-        http://localhost:3000/users/verify/${user.verificationToken}`,
+      verificationToken: user.verificationToken,
     });
 
     res.send({

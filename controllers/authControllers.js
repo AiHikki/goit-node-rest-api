@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import gravatar from "gravatar";
 import crypto from "node:crypto";
-import { sendMail } from "../mail.js";
+import { sendVerificationMail } from "../mail.js";
 
 const register = async (req, res, next) => {
   try {
@@ -26,18 +26,9 @@ const register = async (req, res, next) => {
       verificationToken,
     });
 
-    sendMail({
+    sendVerificationMail({
       to: email,
-      from: "rmik9067@gmail.com",
-      subject: "Please verify your email address",
-      html: `
-        <h1>Please verify your email address</h1>
-        <p>Click this link to verify your email address</p>
-        <a href="http://localhost:3000/users/verify/${verificationToken}">
-          Verify</a>`,
-      text: `
-        Please verify your email address
-        http://localhost:3000/users/verify/${verificationToken}`,
+      verificationToken,
     });
 
     res.send({

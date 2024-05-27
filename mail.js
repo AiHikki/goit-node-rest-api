@@ -9,8 +9,20 @@ const transport = nodemailer.createTransport({
   },
 });
 
-const sendMail = async (message) => {
-  return transport.sendMail(message);
+const sendVerificationMail = async ({ to, verificationToken }) => {
+  return transport.sendMail({
+    to,
+    from: process.env.MAILTRAP_OWNER_EMAIL,
+    subject: "Please verify your email address",
+    html: `
+        <h1>Please verify your email address</h1>
+        <p>Click this link to verify your email address</p>
+        <a href="${process.env.BASE_URL}/users/verify/${verificationToken}">
+          Verify</a>`,
+    text: `
+        Please verify your email address
+        ${process.env.BASE_URL}/users/verify/${verificationToken}`,
+  });
 };
 
-export { sendMail };
+export { sendVerificationMail };
